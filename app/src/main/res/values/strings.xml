@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CardsApp</string>
+    <string name="btnAddCategory">Добавить категорию</string>
+    <string name="cancel">Cancel</string>
+    <string name="cbDefaultCategory">Set as default</string>
+    <string name="ok">Ok</string>
+</resources>
