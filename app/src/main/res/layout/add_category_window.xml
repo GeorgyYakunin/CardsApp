@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="30dp"
-    android:background="#f6f">
+    android:background="#fff">
 
     <LinearLayout
         android:id="@+id/editCategoryTexts"
@@ -13,16 +13,16 @@
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
         <EditText
-            android:id="@+id/etCategoryName"
+            android:id="@+id/newWordListName"
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true" />
         <EditText
-            android:id="@+id/etCategoryTranslate"
+            android:id="@+id/newWordListTranslate"
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/etCategoryName"/>
+            android:layout_below="@+id/newWordListName"/>
     </LinearLayout>
     <CheckBox
         android:id="@+id/cbDefaultCategory"
