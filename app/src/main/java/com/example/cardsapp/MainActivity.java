@@ -11,20 +11,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
 
-    AlertDialog.Builder newCategoryDialog;
-    Button btnNewCategory, TestReadDB;
+    AlertDialog.Builder newWordDialog;
+    Button TestReadDB;
     View mView;
     DBHelper dbHelper;
-
     final String LOG_TAG = "myLogs";
 
     @Override
@@ -32,21 +33,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         dbHelper = new DBHelper(this);
 
-        btnNewCategory = (Button) findViewById(R.id.btnNewCategory);
-        btnNewCategory.setOnClickListener(this);
 
 
 
-        //Create View Dialog window layout
-        mView = getLayoutInflater().inflate(R.layout.add_category_window, null);
+        //Create Dialog window
+        mView = getLayoutInflater().inflate(R.layout.dialog_new_word, null);
         final EditText newWordListName = (EditText) mView.findViewById(R.id.newWordListName);
         final EditText newWordListTranslate = (EditText) mView.findViewById(R.id.newWordListTranslate);
 
         //Add new word list
-        newCategoryDialog = new AlertDialog.Builder(MainActivity.this);
-        newCategoryDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        newWordDialog = new AlertDialog.Builder(MainActivity.this);
+        newWordDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dbHelper.close();
             }
         });
-        
-        newCategoryDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+
+        newWordDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -104,24 +104,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+
+
+
+    }
+    //Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnNewCategory:
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // получим идентификатор выбранного пункта меню
+        int id = item.getItemId();
+
+        // Операции для выбранного пункта меню
+        switch (id) {
+            case R.id.item2:
                 //Fix window recall error
                 if(mView.getParent() != null) {
                     ((ViewGroup)mView.getParent()).removeView(mView);
                 }
                 //Call dialog window
-                newCategoryDialog.setView(mView);
-                newCategoryDialog.show();
-                break;
+                newWordDialog.setView(mView);
+                newWordDialog.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
+
 }
 
+    //Data Base
 class DBHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "collectionOfCategories";
     public static final String COLOMN_LIST_NAME = "listName";

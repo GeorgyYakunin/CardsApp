@@ -12,11 +12,13 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
+
         <EditText
             android:id="@+id/newWordListName"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:hint="enter a word or phrase" />
         <EditText
             android:id="@+id/newWordListTranslate"
             android:layout_width="200dp"
@@ -24,13 +26,5 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/newWordListName"/>
     </LinearLayout>
-    <CheckBox
-        android:id="@+id/cbDefaultCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editCategoryTexts"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="30dp"
-        android:text="@string/cbDefaultCategory" />
 
 </RelativeLayout>
