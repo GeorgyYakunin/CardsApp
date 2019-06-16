@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,13 +30,50 @@ public class MainActivity extends AppCompatActivity {
     DBHelper dbHelper;
     final String LOG_TAG = "myLogs";
 
+    //Strings array for example
+    public String[] wordCollectionsList = new String[10];
+
+    private RecyclerView rvWords;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+
+
+
+
+        //recyclerView var
+        rvWords = (RecyclerView) findViewById(R.id.rvWords);
+        rvWords.setHasFixedSize(true);
+
+        //array of Data for example
+        wordCollectionsList[0] = "test1";
+        wordCollectionsList[1] = "test2";
+        wordCollectionsList[2] = "test3";
+        wordCollectionsList[3] = "test4";
+        wordCollectionsList[4] = "test5";
+        wordCollectionsList[5] = "test6";
+        wordCollectionsList[6] = "test7";
+        wordCollectionsList[7] = "test8";
+        wordCollectionsList[8] = "test9";
+        wordCollectionsList[9] = "test10";
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        rvWords.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapter(wordCollectionsList);
+        rvWords.setAdapter(mAdapter);
+
+
 
 
 
@@ -104,9 +143,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
     //Menu
     @Override
@@ -168,6 +204,8 @@ class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 }
+
+
 
 
 
