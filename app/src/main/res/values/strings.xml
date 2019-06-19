@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">CardsApp</string>
-    <!--dialog_new_word.xml -->
+    <!--dialog_new_categorygory.xml -->
 
     <string name="nameHint">enter a word or phrase</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
     <!--menu_main.xml-->
     <string name="menuItem_1">Search</string>
-    <string name="menuItem_2">Add word</string>
-    <string name="menuItem_3">Settings</string>
+    <string name="menuItem_2">Test Read DB</string>
+    <string name="menuItem_3">Add word</string>
+    <string name="menuItem_4">Settings</string>
 </resources>

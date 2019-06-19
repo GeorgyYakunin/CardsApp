@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,20 +19,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity {
 
 
-    AlertDialog.Builder newWordDialog;
-    Button TestReadDB;
-    View mView;
+    AlertDialog.Builder newCategoryDialog, newWordDialog;
+    Button addNewCategory;
+    View addCategoryDialogView, addWordDialogView;
     DBHelper dbHelper;
     final String LOG_TAG = "myLogs";
+    ArrayList<WordCategory> testArray = new ArrayList<>();
 
-    //Strings array for example
-    public String[] wordCollectionsList = new String[10];
-
-    private RecyclerView rvWords;
+    private RecyclerView rvCategories;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
@@ -45,65 +44,52 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        Cursor c = db.query("listOfCategories", null, null, null, null, null, null);
+        if (c.moveToFirst()) {
+            do {
+                String categoryName = c.getString(c.getColumnIndex("nameOfCategory"));
+                int categoryId = c.getInt(c.getColumnIndex("id"));
+                testArray.add(new WordCategory(categoryId, categoryName));
+            }while(c.moveToNext());
+        }else {
+            Log.d(LOG_TAG, "0 rows");
+        }
+        c.close();
+        dbHelper.close();
+        addNewCategory = findViewById(R.id.addNewCategory);
+        addNewCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Fix window recall error
+                if(addCategoryDialogView.getParent() != null) {
+                    ((ViewGroup)addCategoryDialogView.getParent()).removeView(addCategoryDialogView);
+                }
+                //Call dialog window
+                newCategoryDialog.setView(addCategoryDialogView);
+                newCategoryDialog.show();
+            }
+        });
 
-
-
-
-        //recyclerView var
-        rvWords = (RecyclerView) findViewById(R.id.rvWords);
-        rvWords.setHasFixedSize(true);
-
-        //array of Data for example
-        wordCollectionsList[0] = "test1";
-        wordCollectionsList[1] = "test2";
-        wordCollectionsList[2] = "test3";
-        wordCollectionsList[3] = "test4";
-        wordCollectionsList[4] = "test5";
-        wordCollectionsList[5] = "test6";
-        wordCollectionsList[6] = "test7";
-        wordCollectionsList[7] = "test8";
-        wordCollectionsList[8] = "test9";
-        wordCollectionsList[9] = "test10";
-
-        // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        rvWords.setLayoutManager(layoutManager);
-
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(wordCollectionsList);
-        rvWords.setAdapter(mAdapter);
-
-
-
-
-
-
-        //Create Dialog window
-        mView = getLayoutInflater().inflate(R.layout.dialog_new_word, null);
-        final EditText newWordListName = (EditText) mView.findViewById(R.id.newWordListName);
-        final EditText newWordListTranslate = (EditText) mView.findViewById(R.id.newWordListTranslate);
-
-        //Add new word list
-        newWordDialog = new AlertDialog.Builder(MainActivity.this);
-        newWordDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        //Create category Dialog window
+        addCategoryDialogView = getLayoutInflater().inflate(R.layout.dialog_new_category, null);
+        final EditText newCategoryName = (EditText) addCategoryDialogView.findViewById(R.id.newCategoryName);
+        newCategoryDialog = new AlertDialog.Builder(MainActivity.this);
+        newCategoryDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
                 ContentValues cv = new ContentValues();
                 SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-                String newListName = newWordListName.getText().toString();
-                String newListTranslate = newWordListTranslate.getText().toString();
+                String name = newCategoryName.getText().toString();
 
-                cv.put("listName", newListName);
-                cv.put("listTranslate", newListTranslate);
+                cv.put("nameOfCategory", name);
 
-                db.insert("collectionOfCategories", null, cv);
+                db.insert("listOfCategories", null, cv);
                 dbHelper.close();
             }
         });
-
-        newWordDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        newCategoryDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -111,37 +97,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Button for test read Data Base
-        TestReadDB = (Button) findViewById(R.id.TestReadDB);
-        TestReadDB.setOnClickListener(new View.OnClickListener() {
+        //Create word Dialog window
+        addWordDialogView = getLayoutInflater().inflate(R.layout.dialog_new_word, null);
+        final EditText newWordName = (EditText) addWordDialogView.findViewById(R.id.newWordName);
+        final EditText newWordTranslate = (EditText) addWordDialogView.findViewById(R.id.newWordTranslate);
+        newWordDialog = new AlertDialog.Builder(MainActivity.this);
+        newWordDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                Cursor c = db.query("collectionOfCategories", null, null, null, null, null, null);
-                // ставим позицию курсора на первую строку выборки
-                // если в выборке нет строк, вернется false
-                if (c.moveToFirst()) {
+            public void onClick(DialogInterface dialog, int which) {
+                ContentValues cv = new ContentValues();
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-                    // определяем номера столбцов по имени в выборке
-                    int idColIndex = c.getColumnIndex("id");
-                    int nameColIndex = c.getColumnIndex("listName");
-                    int translateColIndex = c.getColumnIndex("listTranslate");
+                String name = newWordName.getText().toString();
+                String translate = newWordTranslate.getText().toString();
 
-                    do {
-                        // получаем значения по номерам столбцов и пишем все в лог
-                        Log.d(LOG_TAG,
-                                "ID = " + c.getInt(idColIndex) +
-                                        ", name = " + c.getString(nameColIndex) +
-                                        ", translate  = " + c.getString(translateColIndex));
-                        // переход на следующую строку
-                        // а если следующей нет (текущая - последняя), то false - выходим из цикла
-                    } while (c.moveToNext());
-                } else
-                    Log.d(LOG_TAG, "0 rows");
-                c.close();
+                cv.put("nameOfWord", name);
+                cv.put("translateOfWord", translate);
+
+                db.insert("listOfWords", null, cv);
                 dbHelper.close();
+
             }
         });
+        newWordDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+
+        //recyclerView var
+        rvCategories = (RecyclerView) findViewById(R.id.rvWords);
+        rvCategories.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        rvCategories.setLayoutManager(layoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new MyAdapter(testArray, newWordDialog, addWordDialogView);
+        rvCategories.setAdapter(mAdapter);
+
 
     }
     //Menu
@@ -159,13 +156,28 @@ public class MainActivity extends AppCompatActivity {
         // Операции для выбранного пункта меню
         switch (id) {
             case R.id.item2:
-                //Fix window recall error
-                if(mView.getParent() != null) {
-                    ((ViewGroup)mView.getParent()).removeView(mView);
-                }
-                //Call dialog window
-                newWordDialog.setView(mView);
-                newWordDialog.show();
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                Cursor c = db.query("listOfCategories", null, null, null, null, null, null);
+                // ставим позицию курсора на первую строку выборки
+                // если в выборке нет строк, вернется false
+                if (c.moveToFirst()) {
+
+                    // определяем номера столбцов по имени в выборке
+                    int idColIndex = c.getColumnIndex("id");
+                    int nameColIndex = c.getColumnIndex("nameOfCategory");
+
+                    do {
+                        // получаем значения по номерам столбцов и пишем все в лог
+                        Log.d(LOG_TAG,
+                                "ID = " + c.getInt(idColIndex) +
+                                        ", name = " + c.getString(nameColIndex));
+                        // переход на следующую строку
+                        // а если следующей нет (текущая - последняя), то false - выходим из цикла
+                    } while (c.moveToNext());
+                } else
+                    Log.d(LOG_TAG, "0 rows");
+                c.close();
+                dbHelper.close();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -176,36 +188,45 @@ public class MainActivity extends AppCompatActivity {
 
     //Data Base
 class DBHelper extends SQLiteOpenHelper {
-    public static final String TABLE_NAME = "collectionOfCategories";
-    public static final String COLOMN_LIST_NAME = "listName";
-    public static final String COLOMN_LIST_TRANSLATE = "listTranslate";
+    public static final String CATEGORY_TABLE_NAME = "listOfCategories";
+    public static final String COLUMN_CATEGORY_NAME = "nameOfCategory";
+
+    public static final String WORD_TABLE_NAME = "listOfWords";
+    public static final String COLUMN_WORD_NAME = "nameOfWord";
+    public static final String COLUMN_WORD_TRANSLATE = "translateOfWord";
+    public static final String COLUMN_WORD_CATEGORY_ID = "categoryOfWord";
+
     public static final int DATABASE_VERSION = 1;
 
     public DBHelper(Context context) {
-        super(context, TABLE_NAME, null, DATABASE_VERSION);
+        super(context, CATEGORY_TABLE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Row to create table
-        String SQL_CREATE_WORD_LISTS_TABLE = "create table " + TABLE_NAME + " ("
+        String SQL_CREATE_CATEGORY_LISTS_TABLE = "create table " + CATEGORY_TABLE_NAME + " ("
                 + "id integer primary key autoincrement, "
-                + "listName text, "
-                + "listTranslate text"
+                + COLUMN_CATEGORY_NAME
+                + ");";
+
+        String SQL_CREATE_WORD_LIST_TABLE = "create table " + WORD_TABLE_NAME + " ("
+                + "id integer primary key autoincrement, "
+                + COLUMN_WORD_NAME + ", "
+                + COLUMN_WORD_TRANSLATE + ", "
+                + "integer " + COLUMN_WORD_CATEGORY_ID
                 + ");";
 
         //Call create table
-        db.execSQL(SQL_CREATE_WORD_LISTS_TABLE);
+        db.execSQL(SQL_CREATE_CATEGORY_LISTS_TABLE);
+        db.execSQL(SQL_CREATE_WORD_LIST_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CATEGORY_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + WORD_TABLE_NAME);
         onCreate(db);
     }
+
 }
-
-
-
-
-

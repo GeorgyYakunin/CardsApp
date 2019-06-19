@@ -7,30 +7,18 @@
     android:background="#fff">
 
     <LinearLayout
-        android:id="@+id/editWord"
+        android:id="@+id/editCategoryTexts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/newWordName"
+            android:id="@+id/newCategoryName"
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
             android:hint="enter a word or phrase" />
-        <EditText
-            android:id="@+id/newWordTranslate"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/newWordName"
-            android:hint="enter translate" />
-        <EditText
-            android:id="@+id/newWordCategoryId"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/newWordTranslate"
-            android:layout_centerHorizontal="true"/>
     </LinearLayout>
 
 </RelativeLayout>

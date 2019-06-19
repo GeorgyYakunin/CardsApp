@@ -1,39 +1,46 @@
 package com.example.cardsapp;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.Dialog;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.example.cardsapp.R;
+import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-    private String[] wordsFromDB;
+    private ArrayList<WordCategory> categoryFromDB;
+    AlertDialog.Builder newWordDialog;
+    View addWordDialogView;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvWordItem;
+        TextView tvCategoryItem, categoryId;
+        Button addWord, readCategoryWords;
 
         public MyViewHolder(View v) {
             super(v);
-            tvWordItem = (TextView) v.findViewById(R.id.tvWordItem);
-
+            tvCategoryItem = (TextView) v.findViewById(R.id.tvWordItem);
+            categoryId = (TextView) v.findViewById(R.id.categoryId);
+            addWord = (Button) v.findViewById(R.id.addWord);
+            readCategoryWords = (Button) v.findViewById(R.id.readCategoryWords);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(String[] wordCollectionsList) {
-        wordsFromDB = wordCollectionsList;
-
+    public MyAdapter(ArrayList<WordCategory> testArray, AlertDialog.Builder addWordDialog, View addWordDialogView) {
+        categoryFromDB = testArray;
+        newWordDialog = addWordDialog;
+        this.addWordDialogView = addWordDialogView;
     }
 
     // Create new views (invoked by the layout manager)
@@ -41,7 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         FrameLayout v = (FrameLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_text_view, parent, false);
+                .inflate(R.layout.category_card, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }
@@ -51,13 +58,37 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.tvWordItem.setText(wordsFromDB[position]);
+
+        final int p = position;
+        holder.tvCategoryItem.setText(categoryFromDB.get(position).getCategoryName());
+
+        //holder.categoryId.setText(categoryFromDB.get(position).getCategoryId());
+        holder.addWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(addWordDialogView.getParent() != null) {
+                    ((ViewGroup)addWordDialogView.getParent()).removeView(addWordDialogView);
+                }
+                newWordDialog.setView(addWordDialogView);
+                newWordDialog.show();
+
+                //ВОТ ТУТ ОСТАПА ПОНЕСЛО =(
+                //TextView cID = (TextView) addWordDialogView.findViewById(R.id.newWordCategoryId);
+                //cID.setText(categoryFromDB.get(p).getCategoryId());
+            }
+        });
+        holder.readCategoryWords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return 6;
+        return categoryFromDB.size();
     }
 }
