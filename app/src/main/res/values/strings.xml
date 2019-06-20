@@ -7,7 +7,7 @@
     <string name="ok">Ok</string>
     <!--menu_main.xml-->
     <string name="menuItem_1">Search</string>
-    <string name="menuItem_2">Test Read DB</string>
-    <string name="menuItem_3">Add word</string>
+    <string name="menuItem_2">Read Category DB</string>
+    <string name="menuItem_3">Read Word DB</string>
     <string name="menuItem_4">Settings</string>
 </resources>

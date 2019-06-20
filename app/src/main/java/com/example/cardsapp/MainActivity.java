@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        Cursor c = db.query("listOfCategories", null, null, null, null, null, null);
+        Cursor c = db.query(dbHelper.CATEGORY_TABLE_NAME, null, null, null, null, null, null);
         if (c.moveToFirst()) {
             do {
-                String categoryName = c.getString(c.getColumnIndex("nameOfCategory"));
-                int categoryId = c.getInt(c.getColumnIndex("id"));
+                String categoryName = c.getString(c.getColumnIndex(dbHelper.CATEGORY_NAME));
+                int categoryId = c.getInt(c.getColumnIndex(dbHelper.CATEGORY_ID));
                 testArray.add(new WordCategory(categoryId, categoryName));
             }while(c.moveToNext());
         }else {
@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
                 String name = newCategoryName.getText().toString();
 
-                cv.put("nameOfCategory", name);
+                cv.put(dbHelper.CATEGORY_NAME, name);
 
-                db.insert("listOfCategories", null, cv);
+                db.insert(dbHelper.CATEGORY_TABLE_NAME, null, cv);
                 dbHelper.close();
             }
         });
@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         addWordDialogView = getLayoutInflater().inflate(R.layout.dialog_new_word, null);
         final EditText newWordName = (EditText) addWordDialogView.findViewById(R.id.newWordName);
         final EditText newWordTranslate = (EditText) addWordDialogView.findViewById(R.id.newWordTranslate);
+        final EditText newWordCategoryId = (EditText) addWordDialogView.findViewById(R.id.newWordCategoryId);
         newWordDialog = new AlertDialog.Builder(MainActivity.this);
         newWordDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -110,11 +111,13 @@ public class MainActivity extends AppCompatActivity {
 
                 String name = newWordName.getText().toString();
                 String translate = newWordTranslate.getText().toString();
+                String categoryId = newWordCategoryId.getText().toString();
 
-                cv.put("nameOfWord", name);
-                cv.put("translateOfWord", translate);
+                cv.put(dbHelper.WORD_NAME, name);
+                cv.put(dbHelper.WORD_TRANSLATE, translate);
+                cv.put(dbHelper.WORD_CATEGORY_ID, categoryId);
 
-                db.insert("listOfWords", null, cv);
+                db.insert(dbHelper.WORD_TABLE_NAME, null, cv);
                 dbHelper.close();
 
             }
@@ -157,14 +160,14 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.item2:
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
-                Cursor c = db.query("listOfCategories", null, null, null, null, null, null);
+                Cursor c = db.query(dbHelper.CATEGORY_TABLE_NAME, null, null, null, null, null, null);
                 // ставим позицию курсора на первую строку выборки
                 // если в выборке нет строк, вернется false
                 if (c.moveToFirst()) {
 
                     // определяем номера столбцов по имени в выборке
-                    int idColIndex = c.getColumnIndex("id");
-                    int nameColIndex = c.getColumnIndex("nameOfCategory");
+                    int idColIndex = c.getColumnIndex(dbHelper.CATEGORY_ID);
+                    int nameColIndex = c.getColumnIndex(dbHelper.CATEGORY_NAME);
 
                     do {
                         // получаем значения по номерам столбцов и пишем все в лог
@@ -179,6 +182,36 @@ public class MainActivity extends AppCompatActivity {
                 c.close();
                 dbHelper.close();
                 return true;
+            case R.id.item3:
+                SQLiteDatabase db2 = dbHelper.getWritableDatabase();
+                Cursor c2 = db2.query(dbHelper.WORD_TABLE_NAME, null, null, null, null, null, null);
+                // ставим позицию курсора на первую строку выборки
+                // если в выборке нет строк, вернется false
+                if (c2.moveToFirst()) {
+
+                    // определяем номера столбцов по имени в выборке
+                    int idColIndex = c2.getColumnIndex(dbHelper.WORD_ID);
+                    int nameColIndex = c2.getColumnIndex(dbHelper.WORD_NAME);
+                    int translateColIndex = c2.getColumnIndex(dbHelper.WORD_TRANSLATE);
+                    int categoryColIndex = c2.getColumnIndex(dbHelper.WORD_CATEGORY_ID);
+
+                    do {
+                        // получаем значения по номерам столбцов и пишем все в лог
+                        Log.d(LOG_TAG,
+                                "ID = " + c2.getInt(idColIndex)
+                                        + ", name = " + c2.getString(nameColIndex)
+                                        + ", translate = " + c2.getString(translateColIndex)
+                                        + " , category = " + c2.getString(categoryColIndex)
+
+                        );
+                        // переход на следующую строку
+                        // а если следующей нет (текущая - последняя), то false - выходим из цикла
+                    } while (c2.moveToNext());
+                } else
+                    Log.d(LOG_TAG, "0 rows");
+                c2.close();
+                dbHelper.close();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -188,13 +221,15 @@ public class MainActivity extends AppCompatActivity {
 
     //Data Base
 class DBHelper extends SQLiteOpenHelper {
-    public static final String CATEGORY_TABLE_NAME = "listOfCategories";
-    public static final String COLUMN_CATEGORY_NAME = "nameOfCategory";
+    public static final String CATEGORY_TABLE_NAME = "list_of_categories";
+    public static final String CATEGORY_NAME = "category_name";
+    public static final String CATEGORY_ID = "category_id";
 
-    public static final String WORD_TABLE_NAME = "listOfWords";
-    public static final String COLUMN_WORD_NAME = "nameOfWord";
-    public static final String COLUMN_WORD_TRANSLATE = "translateOfWord";
-    public static final String COLUMN_WORD_CATEGORY_ID = "categoryOfWord";
+    public static final String WORD_TABLE_NAME = "list_of_words";
+    public static final String WORD_NAME = "word_name";
+    public static final String WORD_TRANSLATE = "word_translate";
+    public static final String WORD_CATEGORY_ID = "word_category_id";
+    public static final String WORD_ID = "word_id";
 
     public static final int DATABASE_VERSION = 1;
 
@@ -205,16 +240,18 @@ class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Row to create table
-        String SQL_CREATE_CATEGORY_LISTS_TABLE = "create table " + CATEGORY_TABLE_NAME + " ("
-                + "id integer primary key autoincrement, "
-                + COLUMN_CATEGORY_NAME
+        String SQL_CREATE_CATEGORY_LISTS_TABLE = "create table "
+                + CATEGORY_TABLE_NAME + " ( "
+                + CATEGORY_ID + " integer primary key autoincrement, "
+                + CATEGORY_NAME + " text not null"
                 + ");";
 
         String SQL_CREATE_WORD_LIST_TABLE = "create table " + WORD_TABLE_NAME + " ("
-                + "id integer primary key autoincrement, "
-                + COLUMN_WORD_NAME + ", "
-                + COLUMN_WORD_TRANSLATE + ", "
-                + "integer " + COLUMN_WORD_CATEGORY_ID
+                + WORD_ID + " integer primary key autoincrement, "
+                + WORD_NAME + " text not null, "
+                + WORD_TRANSLATE + " text not null, "
+                + WORD_CATEGORY_ID + " integer,"
+                + " FOREIGN KEY (" + WORD_CATEGORY_ID + ") REFERENCES " + CATEGORY_TABLE_NAME + "(" + CATEGORY_ID + ")"
                 + ");";
 
         //Call create table
@@ -228,5 +265,12 @@ class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + WORD_TABLE_NAME);
         onCreate(db);
     }
+
+        @Override
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " + CATEGORY_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + WORD_TABLE_NAME);
+            onCreate(db);
+        }
 
 }
