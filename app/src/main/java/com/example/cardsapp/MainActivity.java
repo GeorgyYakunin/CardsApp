@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-
 import java.util.ArrayList;
 
 
@@ -144,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     //Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

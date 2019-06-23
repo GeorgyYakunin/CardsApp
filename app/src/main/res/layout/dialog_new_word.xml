@@ -27,9 +27,8 @@
             android:hint="enter translate" />
         <EditText
             android:id="@+id/newWordCategoryId"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/newWordTranslate"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_centerHorizontal="true"/>
     </LinearLayout>
 
