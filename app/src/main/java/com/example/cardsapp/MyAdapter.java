@@ -1,50 +1,44 @@
 package com.example.cardsapp;
 
-import android.support.v7.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
-    private ArrayList<WordCategory> categoryFromDB;
-    AlertDialog.Builder newWordDialog;
-    View addWordDialogView;
+    private mDialogBuilder dialogBuilder;
+//    private DBHelper dbHelper;
+    ArrayList<WordCategory> categoryList;
+    private Context context;
 
-
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvCategoryItem, categoryId;
-        Button addWord, readCategoryWords;
-
+        TextView tvCategoryItem;
+        Button addWord;
+        Button startTraining;
 
         public MyViewHolder(View v) {
             super(v);
             tvCategoryItem = (TextView) v.findViewById(R.id.tvWordItem);
-            categoryId = (TextView) v.findViewById(R.id.categoryId);
             addWord = (Button) v.findViewById(R.id.addWord);
-            readCategoryWords = (Button) v.findViewById(R.id.readCategoryWords);
-
+            startTraining = (Button) v.findViewById(R.id.startTraining);
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(ArrayList<WordCategory> testArray, AlertDialog.Builder addWordDialog, View addWordDialogView) {
-        categoryFromDB = testArray;
-        newWordDialog = addWordDialog;
-        this.addWordDialogView = addWordDialogView;
+    public MyAdapter(DBHelper dbHelper, mDialogBuilder dialogBuilder, Context context) {
+//        this.dbHelper = dbHelper;
+        this.dialogBuilder = dialogBuilder;
+        categoryList = dbHelper.getCategoryList();
+        this.context = context;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
@@ -54,40 +48,32 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-
         final int p = position;
-
-        holder.tvCategoryItem.setText(categoryFromDB.get(position).getCategoryName());
+        holder.tvCategoryItem.setText(categoryList.get(position).getCategoryName());
         holder.addWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText newWordCategoryId = (EditText) addWordDialogView.findViewById(R.id.newWordCategoryId);
-                if(addWordDialogView.getParent() != null) {
-                    ((ViewGroup)addWordDialogView.getParent()).removeView(addWordDialogView);
-                }
-                newWordDialog.setView(addWordDialogView);
-                newWordDialog.show();
-                int categoryId = categoryFromDB.get(p).getCategoryId();
-                newWordCategoryId.setText(String.valueOf(categoryId));
+                //Старая реализация добавления слова - вызов диалогового окна
+                dialogBuilder.showAddWordDialog(categoryList.get(p).getCategoryId());
+                //Новая реализация (пока что в комменте)
+                //Вызов активити для добавления одного или нескольких слов сразу
+//                Intent intent = new Intent(context, AddWordsActivity.class);
+//                context.startActivity(intent);
             }
         });
-        holder.readCategoryWords.setOnClickListener(new View.OnClickListener() {
+        holder.startTraining.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(context, TrainingActivity.class);
+                context.startActivity(intent);
             }
         });
-
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return categoryFromDB.size();
+        return categoryList.size();
     }
 }
