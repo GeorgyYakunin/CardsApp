@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -20,7 +19,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String WORD_CATEGORY_ID = "word_category_id";
     public static final String WORD_ID = "word_id";
 
-    ArrayList<WordCategory> categoryList = new ArrayList<WordCategory>();
+    ArrayList<CategoryListItem> categoryList = new ArrayList<CategoryListItem>();
+    ArrayList<WordListItem> wordList = new ArrayList<WordListItem>();
 
     public static final int DATABASE_VERSION = 1;
 
@@ -64,19 +64,37 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public ArrayList<WordCategory> getCategoryList() {
+    public ArrayList<CategoryListItem> getCategoryList() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.query(CATEGORY_TABLE_NAME, null, null, null, null, null, null);
         if (c.moveToFirst()) {
             do {
                 String categoryName = c.getString(c.getColumnIndex(CATEGORY_NAME));
                 int categoryId = c.getInt(c.getColumnIndex(CATEGORY_ID));
-                categoryList.add(new WordCategory(categoryId, categoryName));
+                categoryList.add(new CategoryListItem(categoryId, categoryName));
             }while(c.moveToNext());
         }
         c.close();
         db.close();
         return categoryList;
+    }
+
+    public ArrayList<WordListItem> getWordList(int categoryId) {
+        String[] columns = new String[]{"word_name", "word_translate"};
+        String selection = "word_category_id = " + categoryId;
+        ArrayList<WordListItem> wordList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(WORD_TABLE_NAME, columns, selection, null, null, null, null);
+        if (c.moveToFirst()) {
+            do {
+                String wordName = c.getString(c.getColumnIndex("word_name"));
+                String wordTranslate = c.getString(c.getColumnIndex("word_translate"));
+                wordList.add(new WordListItem(categoryId, wordName, wordTranslate));
+            }while(c.moveToNext());
+        }
+        c.close();
+        db.close();
+        return wordList;
     }
 
 

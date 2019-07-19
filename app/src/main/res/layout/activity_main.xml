@@ -14,7 +14,7 @@
             android:text="Add new Category"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvWords"
+            android:id="@+id/rvCategoriesList"
             android:scrollbars="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

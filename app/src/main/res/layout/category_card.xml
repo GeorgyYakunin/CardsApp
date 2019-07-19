@@ -21,7 +21,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tvWordItem"
+                    android:id="@+id/tvCategoryName"
                     style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"

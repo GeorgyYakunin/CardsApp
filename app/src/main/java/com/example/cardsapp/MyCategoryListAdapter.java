@@ -3,6 +3,7 @@ package com.example.cardsapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,28 +12,43 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class MyCategoryListAdapter extends RecyclerView.Adapter<MyCategoryListAdapter.MyViewHolder> {
 
     private mDialogBuilder dialogBuilder;
 //    private DBHelper dbHelper;
-    ArrayList<WordCategory> categoryList;
-    private Context context;
+    ArrayList<CategoryListItem> categoryList;
+    private static Context context;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvCategoryItem;
+        TextView tvCategoryItemName;
         Button addWord;
         Button startTraining;
+        int categoryId;
+
+        private void getCategoryId(int categoryId){
+            this.categoryId = categoryId;
+        }
 
         public MyViewHolder(View v) {
             super(v);
-            tvCategoryItem = (TextView) v.findViewById(R.id.tvWordItem);
+            tvCategoryItemName = (TextView) v.findViewById(R.id.tvCategoryName);
             addWord = (Button) v.findViewById(R.id.addWord);
             startTraining = (Button) v.findViewById(R.id.startTraining);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, CategoryWordListActivity.class);
+                    //Log.d("categoryIdTest", String.valueOf(categoryId));
+                    intent.putExtra("categoryId", categoryId);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 
-    public MyAdapter(DBHelper dbHelper, mDialogBuilder dialogBuilder, Context context) {
+    public MyCategoryListAdapter(DBHelper dbHelper, mDialogBuilder dialogBuilder, Context context) {
 //        this.dbHelper = dbHelper;
         this.dialogBuilder = dialogBuilder;
         categoryList = dbHelper.getCategoryList();
@@ -40,7 +56,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     @Override
-    public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyCategoryListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         FrameLayout v = (FrameLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.category_card, parent, false);
@@ -51,7 +67,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final int p = position;
-        holder.tvCategoryItem.setText(categoryList.get(position).getCategoryName());
+        holder.tvCategoryItemName.setText(categoryList.get(position).getCategoryName());
+        holder.getCategoryId(categoryList.get(position).getCategoryId());
         holder.addWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +77,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 //Новая реализация (пока что в комменте)
                 //Вызов активити для добавления одного или нескольких слов сразу
 //                Intent intent = new Intent(context, AddWordsActivity.class);
+//                intent.putExtra(Добавить передачу id категории слов);
 //                context.startActivity(intent);
             }
         });

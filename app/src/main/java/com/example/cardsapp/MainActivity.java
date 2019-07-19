@@ -3,7 +3,6 @@ package com.example.cardsapp;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "myLogs";
 
     private RecyclerView rvCategories;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter mCategoryListAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     @Override
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //recyclerView var
-        rvCategories = (RecyclerView) findViewById(R.id.rvWords);
+        rvCategories = (RecyclerView) findViewById(R.id.rvCategoriesList);
         rvCategories.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -54,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         rvCategories.setLayoutManager(layoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(dbHelper, dialogBuilder, this);
-        rvCategories.setAdapter(mAdapter);
+        mCategoryListAdapter = new MyCategoryListAdapter(dbHelper, dialogBuilder, this);
+        rvCategories.setAdapter(mCategoryListAdapter);
     }
 
     @Override
