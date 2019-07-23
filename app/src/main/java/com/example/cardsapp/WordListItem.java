@@ -2,22 +2,22 @@ package com.example.cardsapp;
 
 public class WordListItem {
 
-    private int categoryId;
-    private String wordName;
-    private String wordTranslate;
+    private int myCategoryId;
+    private String myWordName;
+    private String myWordTranslate;
 
     public WordListItem(int categoryId, String wordName, String wordTranslate){
-        this.categoryId = categoryId;
-        this.wordName = wordName;
-        this.wordTranslate = wordTranslate;
+        myCategoryId = categoryId;
+        myWordName = wordName;
+        myWordTranslate = wordTranslate;
 
     }
 
     public String getWordName() {
-        return wordName;
+        return myWordName;
     }
 
     public String getWordTranslate() {
-        return wordTranslate;
+        return myWordTranslate;
     }
 }

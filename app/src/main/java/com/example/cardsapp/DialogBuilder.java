@@ -10,19 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import static java.lang.String.valueOf;
-
-public class mDialogBuilder {
+public class DialogBuilder {
 
     private View addWordDialogView;
     private View addCategoryDialogView;
     private AlertDialog.Builder newCategoryDialog;
     private AlertDialog.Builder newWordDialog;
-    private DBHelper dbHelper;
+    private DBHelper mDBHelper;
     private LayoutInflater inflater;
 
-    public mDialogBuilder(Context context){
-        dbHelper = new DBHelper(context);
+    public DialogBuilder(Context context){
+        mDBHelper = new DBHelper(context);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         createCategoryDialogWindow(context);
         createNewWordDialogWindow(context);
@@ -36,11 +34,11 @@ public class mDialogBuilder {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ContentValues cv = new ContentValues();
-                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                SQLiteDatabase db = mDBHelper.getReadableDatabase();
                 String name = newCategoryName.getText().toString();
-                cv.put(dbHelper.CATEGORY_NAME, name);
-                db.insert(dbHelper.CATEGORY_TABLE_NAME, null, cv);
-                dbHelper.close();
+                cv.put(mDBHelper.CATEGORY_NAME, name);
+                db.insert(mDBHelper.CATEGORY_TABLE_NAME, null, cv);
+                mDBHelper.close();
             }
         });
         newCategoryDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -83,15 +81,15 @@ public class mDialogBuilder {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ContentValues cv = new ContentValues();
-                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                SQLiteDatabase db = mDBHelper.getReadableDatabase();
                 String name = newWordName.getText().toString();
                 String translate = newWordTranslate.getText().toString();
                 String id = String.valueOf(categoryID);
-                cv.put(dbHelper.WORD_NAME, name);
-                cv.put(dbHelper.WORD_TRANSLATE, translate);
-                cv.put(dbHelper.WORD_CATEGORY_ID, id);
-                db.insert(dbHelper.WORD_TABLE_NAME, null, cv);
-                dbHelper.close();
+                cv.put(mDBHelper.WORD_NAME, name);
+                cv.put(mDBHelper.WORD_TRANSLATE, translate);
+                cv.put(mDBHelper.WORD_CATEGORY_ID, id);
+                db.insert(mDBHelper.WORD_TABLE_NAME, null, cv);
+                mDBHelper.close();
             }
         });
         newWordDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

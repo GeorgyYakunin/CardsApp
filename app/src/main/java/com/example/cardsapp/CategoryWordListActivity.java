@@ -8,12 +8,10 @@ import android.support.v7.widget.RecyclerView;
 
 public class CategoryWordListActivity extends AppCompatActivity {
 
-    private DBHelper dbHelper;
-    //КОНСТАНТА CATEGORY_ID = ID категории, которую открыл пользователь
-
-    private RecyclerView rvWords;
+    private DBHelper mDBHelper;
+    private RecyclerView mWordListRecycler;
     private RecyclerView.Adapter mWordListAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,21 +19,20 @@ public class CategoryWordListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category_word_list_);
 
         Intent intent = getIntent();
-        int categoryId = intent.getIntExtra("categoryId", 1);
+        int categoryId = intent.getIntExtra("categoryId", 0);
 
-        dbHelper = new DBHelper(this);
-
+        mDBHelper = new DBHelper(this);
 
         //recyclerView var
-        rvWords = (RecyclerView) findViewById(R.id.rvWordList);
-        rvWords.setHasFixedSize(true);
+        mWordListRecycler = (RecyclerView) findViewById(R.id.rvWordList);
+        mWordListRecycler.setHasFixedSize(true);
 
         // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        rvWords.setLayoutManager(layoutManager);
+        mLayoutManager = new LinearLayoutManager(this);
+        mWordListRecycler.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mWordListAdapter = new MyWordListAdapter(dbHelper, categoryId, this);
-        rvWords.setAdapter(mWordListAdapter);
+        mWordListAdapter = new MyWordListAdapter(mDBHelper, categoryId, this);
+        mWordListRecycler.setAdapter(mWordListAdapter);
     }
 }

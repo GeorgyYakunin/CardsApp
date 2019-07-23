@@ -3,7 +3,6 @@ package com.example.cardsapp;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +13,9 @@ import java.util.ArrayList;
 
 public class MyCategoryListAdapter extends RecyclerView.Adapter<MyCategoryListAdapter.MyViewHolder> {
 
-    private mDialogBuilder dialogBuilder;
+    private DialogBuilder mDialogBuilder;
 //    private DBHelper dbHelper;
-    ArrayList<CategoryListItem> categoryList;
+    private ArrayList<CategoryListItem> categoryList;
     private static Context context;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -48,10 +47,10 @@ public class MyCategoryListAdapter extends RecyclerView.Adapter<MyCategoryListAd
         }
     }
 
-    public MyCategoryListAdapter(DBHelper dbHelper, mDialogBuilder dialogBuilder, Context context) {
+    public MyCategoryListAdapter(DBHelper mDBHelper, DialogBuilder mDialogBuilder, Context context) {
 //        this.dbHelper = dbHelper;
-        this.dialogBuilder = dialogBuilder;
-        categoryList = dbHelper.getCategoryList();
+        this.mDialogBuilder = mDialogBuilder;
+        categoryList = mDBHelper.getCategoryList();
         this.context = context;
     }
 
@@ -73,7 +72,7 @@ public class MyCategoryListAdapter extends RecyclerView.Adapter<MyCategoryListAd
             @Override
             public void onClick(View v) {
                 //Старая реализация добавления слова - вызов диалогового окна
-                dialogBuilder.showAddWordDialog(categoryList.get(p).getCategoryId());
+                mDialogBuilder.showAddWordDialog(categoryList.get(p).getCategoryId());
                 //Новая реализация (пока что в комменте)
                 //Вызов активити для добавления одного или нескольких слов сразу
 //                Intent intent = new Intent(context, AddWordsActivity.class);

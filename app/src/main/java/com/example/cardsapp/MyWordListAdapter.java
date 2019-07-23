@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 public class MyWordListAdapter extends RecyclerView.Adapter<MyWordListAdapter.MyViewHolder> {
 
-    private DBHelper dbHelper;
+    private DBHelper mDBHelper;
     ArrayList<WordListItem> wordList;
-    private static Context context;
-    private int categoryId;
+//    private static Context mContext;
+//    private int categoryId;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -30,11 +30,11 @@ public class MyWordListAdapter extends RecyclerView.Adapter<MyWordListAdapter.My
         }
     }
 
-    public MyWordListAdapter(DBHelper dbHelper, int categoryId, Context context) {
-        this.dbHelper = dbHelper;
-        this.categoryId = categoryId;
-        wordList = dbHelper.getWordList(categoryId);
-        this.context = context;
+    public MyWordListAdapter(DBHelper mDBHelper, int categoryId, Context context) {
+        this.mDBHelper = mDBHelper;
+//        this.categoryId = categoryId;
+        wordList = mDBHelper.getWordList(categoryId);
+//        this.mContext = context;
     }
 
     @Override
