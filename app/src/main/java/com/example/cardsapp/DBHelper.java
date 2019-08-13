@@ -8,10 +8,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import static java.lang.String.valueOf;
+
 public class DBHelper extends SQLiteOpenHelper {
 
-    private final String LOG_TAG = "READ_FROM_DB";
-    public static final int DATABASE_VERSION = 1;
+    private static final String LOG_TAG = "READ_FROM_DB";
+    public static final int DATABASE_VERSION = 2;
     public static final String CATEGORY_TABLE_NAME = "list_of_categories";
     public static final String CATEGORY_NAME = "category_name";
     public static final String CATEGORY_ID = "category_id";
@@ -22,8 +24,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String WORD_CATEGORY_ID = "word_category_id";
     public static final String WORD_ID = "word_id";
 
-    private ArrayList<CategoryListItem> categoryList = new ArrayList<>();
-    private ArrayList<WordListItem> wordList = new ArrayList<>();
+    private ArrayList<CategoryListItem> mCategoryList = new ArrayList<>();
+    private ArrayList<WordListItem> mWordList = new ArrayList<>();
 
     public DBHelper(Context context) {
         super(context, CATEGORY_TABLE_NAME, null, DATABASE_VERSION);
@@ -68,77 +70,106 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public ArrayList<CategoryListItem> getCategoryList() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.query(CATEGORY_TABLE_NAME, null, null, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                String categoryName = c.getString(c.getColumnIndex(CATEGORY_NAME));
-                int categoryId = c.getInt(c.getColumnIndex(CATEGORY_ID));
-                categoryList.add(new CategoryListItem(categoryId, categoryName));
-            }while(c.moveToNext());
+        Cursor c;
+        try {
+            c = db.query(CATEGORY_TABLE_NAME, null, null, null, null, null, null);
+            if (c.moveToFirst()) {
+                do {
+                    String categoryName = c.getString(c.getColumnIndex(CATEGORY_NAME));
+                    int categoryId = c.getInt(c.getColumnIndex(CATEGORY_ID));
+                    mCategoryList.add(new CategoryListItem(categoryId, categoryName));
+                } while (c.moveToNext());
+                c.close();
+                db.close();
+            }
+        } finally {
+
         }
-        c.close();
-        db.close();
-        return categoryList;
+        return mCategoryList;
     }
 
     public ArrayList<WordListItem> getWordList(int categoryId) {
         String[] columns = new String[]{"word_name", "word_translate"};
         String selection = "word_category_id = " + categoryId;
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.query(WORD_TABLE_NAME, columns, selection, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                String wordName = c.getString(c.getColumnIndex("word_name"));
-                String wordTranslate = c.getString(c.getColumnIndex("word_translate"));
-                wordList.add(new WordListItem(categoryId, wordName, wordTranslate));
-            }while(c.moveToNext());
+        Cursor c = db.query(WORD_TABLE_NAME, columns, selection, null, null, null, null);;
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    String wordName = c.getString(c.getColumnIndex("word_name"));
+                    String wordTranslate = c.getString(c.getColumnIndex("word_translate"));
+                    mWordList.add(new WordListItem(categoryId, wordName, wordTranslate));
+                }while(c.moveToNext());
+            }
+            else{
+                c.close();
+                db.close();
+            }
+        } finally {
+            c.close();
+            db.close();
         }
-        c.close();
-        db.close();
-        return wordList;
+        return mWordList;
     }
 
-    public boolean readCategoryListFromDB() {
+    public void readCategoryListFromDB() {
         SQLiteDatabase db = getWritableDatabase();
-        Cursor c = db.query(CATEGORY_TABLE_NAME, null, null, null, null, null, null);
-        if (c.moveToFirst()) {
-            int idColIndex = c.getColumnIndex(CATEGORY_ID);
-            int nameColIndex = c.getColumnIndex(CATEGORY_NAME);
+        Cursor c;
+        try {
+            c = db.query(CATEGORY_TABLE_NAME, null, null, null, null, null, null);
+            if (c.moveToFirst()) {
+                int idColIndex = c.getColumnIndex(CATEGORY_ID);
+                int nameColIndex = c.getColumnIndex(CATEGORY_NAME);
 
-            do {
-                Log.d(LOG_TAG,
-                        "ID = " + c.getInt(idColIndex) +
-                                ", name = " + c.getString(nameColIndex));
-            } while (c.moveToNext());
-        } else
-            Log.d(LOG_TAG, "0 rows");
-        c.close();
-        db.close();
-        return true;
+                do {
+                    Log.d(LOG_TAG,
+                            "ID = " + c.getInt(idColIndex) +
+                                    ", name = " + c.getString(nameColIndex));
+                } while (c.moveToNext());
+                c.close();
+                db.close();
+            } else {
+                Log.d(LOG_TAG, "0 rows");
+                c.close();
+                db.close();
+            }
+        } finally {
+
+        }
     }
 
-    public boolean readWordListFromDB() {
-        SQLiteDatabase db2 = getWritableDatabase();
-        Cursor c2 = db2.query(WORD_TABLE_NAME, null, null, null, null, null, null);
-        if (c2.moveToFirst()) {
-            int idColIndex = c2.getColumnIndex(WORD_ID);
-            int nameColIndex = c2.getColumnIndex(WORD_NAME);
-            int translateColIndex = c2.getColumnIndex(WORD_TRANSLATE);
-            int categoryColIndex = c2.getColumnIndex(WORD_CATEGORY_ID);
-            do {
-                Log.d(LOG_TAG,
-                        "ID = " + c2.getInt(idColIndex)
-                                + ", name = " + c2.getString(nameColIndex)
-                                + ", translate = " + c2.getString(translateColIndex)
-                                + " , category = " + c2.getString(categoryColIndex)
-                );
-            } while (c2.moveToNext());
-        } else
-            Log.d(LOG_TAG, "0 rows");
-        c2.close();
-        db2.close();
-        return true;
+    public void readWordListFromDB() {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c;
+        try {
+            c = db.query(WORD_TABLE_NAME, null, null, null, null, null, null);
+            if (c.moveToFirst()) {
+                int idColIndex = c.getColumnIndex(WORD_ID);
+                int nameColIndex = c.getColumnIndex(WORD_NAME);
+                int translateColIndex = c.getColumnIndex(WORD_TRANSLATE);
+                int categoryColIndex = c.getColumnIndex(WORD_CATEGORY_ID);
+                do {
+                    Log.d("test change",
+                            "ID = " + c.getInt(idColIndex)
+                                    + ", name = " + c.getString(nameColIndex)
+                                    + ", translate = " + c.getString(translateColIndex)
+                                    + " , category = " + c.getString(categoryColIndex)
+                    );
+                } while (c.moveToNext());
+                c.close();
+                db.close();
+            } else {
+                Log.d(LOG_TAG, "0 rows");
+                c.close();
+                db.close();
+            }
+        } finally {
+
+        }
     }
 
-
+    public void deleteCategoryFromDB(int categoryID){
+        String l= new String(valueOf(categoryID));
+        Log.d("DB info", l);
+    }
 }

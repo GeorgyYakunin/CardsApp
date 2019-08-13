@@ -2,23 +2,23 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/item1"
-        android:title="@string/menuItem_1"
+        android:id="@+id/mMenuItem1"
+        android:title="@string/mMenuItem_1"
         app:showAsAction="always">
     </item>
     <item
-        android:id="@+id/item2"
-        android:title="@string/menuItem_2"
+        android:id="@+id/mMenuItem2"
+        android:title="@string/mMenuItem_2"
         app:showAsAction="ifRoom">
     </item>
     <item
-        android:id="@+id/item3"
-        android:title="@string/menuItem_3"
+        android:id="@+id/mMenuItem3"
+        android:title="@string/mMenuItem_3"
         app:showAsAction="ifRoom">
     </item>
     <item
-        android:id="@+id/item4"
-        android:title="@string/menuItem_4"
+        android:id="@+id/mMenuItem4"
+        android:title="@string/mMenuItem_4"
         app:showAsAction="ifRoom">
     </item>
 </menu>

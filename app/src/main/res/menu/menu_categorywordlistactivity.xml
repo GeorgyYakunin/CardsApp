@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/cActivityMenuItem1"
+        android:title="@string/cActivityMenuItem_1"
+        app:showAsAction="always">
+    </item>
+    <item
+        android:id="@+id/cActivityMenuItem2"
+        android:title="@string/cActivityMenuItem_2"
+        app:showAsAction="ifRoom">
+    </item>
+    <item
+        android:id="@+id/cActivityMenuItem3"
+        android:title="@string/cActivityMenuItem_3"
+        app:showAsAction="ifRoom">
+    </item>
+    <item
+        android:id="@+id/cActivityMenuItem4"
+        android:title="@string/cActivityMenuItem_4"
+        app:showAsAction="ifRoom">
+    </item>
+
+</menu>

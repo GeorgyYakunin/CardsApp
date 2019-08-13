@@ -23,9 +23,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mDialogBuilder = new DialogBuilder(this);
         mDBHelper = new DBHelper(this);
+
+        mCategoryListRecycler = (RecyclerView) findViewById(R.id.rvCategoriesList);
+//        mCategoryListRecycler.setHasFixedSize(false);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mCategoryListRecycler.setLayoutManager(mLayoutManager);
+        mCategoryListAdapter = new MyCategoryListAdapter(this, mDBHelper);
+
+
+        mDialogBuilder = new DialogBuilder(this, mCategoryListAdapter, mCategoryListRecycler);
+        mCategoryListRecycler.setAdapter(mCategoryListAdapter);
 
         mCreateNewCategoryButton = findViewById(R.id.addNewCategory);
         mCreateNewCategoryButton.setOnClickListener(new View.OnClickListener() {
@@ -35,17 +44,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //recyclerView var
-        mCategoryListRecycler = (RecyclerView) findViewById(R.id.rvCategoriesList);
-        mCategoryListRecycler.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        mCategoryListRecycler.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
-        mCategoryListAdapter = new MyCategoryListAdapter(mDBHelper, mDialogBuilder, this);
-        mCategoryListRecycler.setAdapter(mCategoryListAdapter);
     }
 
     @Override
@@ -58,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemId = item.getItemId();
         switch (menuItemId) {
-            case R.id.item2:
+            case R.id.mMenuItem2:
                 mDBHelper.readCategoryListFromDB();
-            case R.id.item3:
+            case R.id.mMenuItem3:
                 mDBHelper.readWordListFromDB();
             default:
                 return super.onOptionsItemSelected(item);

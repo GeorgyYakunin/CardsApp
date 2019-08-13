@@ -1,12 +1,10 @@
 package com.example.cardsapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -14,14 +12,12 @@ import java.util.ArrayList;
 public class MyWordListAdapter extends RecyclerView.Adapter<MyWordListAdapter.MyViewHolder> {
 
     private DBHelper mDBHelper;
-    ArrayList<WordListItem> wordList;
-//    private static Context mContext;
-//    private int categoryId;
+    private ArrayList<WordListItem> mWordList;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvWordName;
-        TextView tvWordTranslate;
+        private TextView tvWordName;
+        private TextView tvWordTranslate;
 
         public MyViewHolder(View v) {
             super(v);
@@ -32,9 +28,7 @@ public class MyWordListAdapter extends RecyclerView.Adapter<MyWordListAdapter.My
 
     public MyWordListAdapter(DBHelper mDBHelper, int categoryId, Context context) {
         this.mDBHelper = mDBHelper;
-//        this.categoryId = categoryId;
-        wordList = mDBHelper.getWordList(categoryId);
-//        this.mContext = context;
+        mWordList = mDBHelper.getWordList(categoryId);
     }
 
     @Override
@@ -47,12 +41,12 @@ public class MyWordListAdapter extends RecyclerView.Adapter<MyWordListAdapter.My
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.tvWordName.setText(wordList.get(position).getWordName());
-        holder.tvWordTranslate.setText(wordList.get(position).getWordTranslate());
+        holder.tvWordName.setText(mWordList.get(position).getWordName());
+        holder.tvWordTranslate.setText(mWordList.get(position).getWordTranslate());
     }
 
     @Override
     public int getItemCount() {
-        return wordList.size();
+        return mWordList.size();
     }
 }

@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class CategoryWordListActivity extends AppCompatActivity {
 
@@ -35,4 +37,24 @@ public class CategoryWordListActivity extends AppCompatActivity {
         mWordListAdapter = new MyWordListAdapter(mDBHelper, categoryId, this);
         mWordListRecycler.setAdapter(mWordListAdapter);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Создать собственный xml ресурс меню для данной Activity
+        getMenuInflater().inflate(R.menu.menu_categorywordlistactivity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+//        int menuItemId = item.getItemId();
+//        switch (menuItemId) {
+//            case R.id.item2:
+//                mDBHelper.readCategoryListFromDB();
+//            case R.id.item3:
+//                mDBHelper.readWordListFromDB();
+//            default:
+                return super.onOptionsItemSelected(item);
+    }
 }
+

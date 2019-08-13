@@ -5,8 +5,13 @@
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
     <!--menu_main.xml-->
-    <string name="menuItem_1">Search</string>
-    <string name="menuItem_2">Read Category DB</string>
-    <string name="menuItem_3">Read Word DB</string>
-    <string name="menuItem_4">Settings</string>
+    <string name="mMenuItem_1">Search</string>
+    <string name="mMenuItem_2">Read Category DB</string>
+    <string name="mMenuItem_3">Read Word DB</string>
+    <string name="mMenuItem_4">Settings - Placeholder</string>
+    <!--menu_categoryWordListActivity.xml-->
+    <string name="cActivityMenuItem_1">Placeholder</string>
+    <string name="cActivityMenuItem_2">Placeholder</string>
+    <string name="cActivityMenuItem_3">Placeholder</string>
+    <string name="cActivityMenuItem_4">Placeholder</string>
 </resources>
